@@ -1,6 +1,6 @@
 {
   "name": "autoversioner",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A simple cli tool to help you better track versions in your project",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -39,7 +39,7 @@
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.17",
-    "autoversioner": "^0.0.4",
+    "autoversioner": "^0.0.5",
     "jest": "^29.7.0",
     "rollup": "^4.40.2",
     "ts-jest": "^29.3.2",

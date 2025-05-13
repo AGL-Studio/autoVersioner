@@ -36,8 +36,12 @@ const main = async (): Promise<void> => {
   const conf = await checkForConf(configPath ?? undefined);
 
   const availableProjects = ["main", ...(conf.subprojects || []).map(p => p.dir)];
-  
-  const answers = await inquirer.prompt([
+  // Dynamically import inquirer for ESM/CJS compatibility
+  const inquirerModule = await import("inquirer");
+  // Always use .default, as inquirer v12+ is ESM-only and exports prompt on default
+  const inquirerPrompt = inquirerModule.default.prompt;
+
+  const answers = await inquirerPrompt([
     {
       type: "list",
       name: "versionType",
