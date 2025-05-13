@@ -31,14 +31,16 @@ export const pushToGit = async (
     const versionInfo = Object.entries(versionUpdates)
       .map(([project, version]) => `${project}: v${version}`)
       .join(', ');
-    const fullCommitMessage = `${commitMessage} [${versionInfo}]`;
+    const fullCommitMessage = versionInfo
+      ? `${commitMessage} [${versionInfo}]`
+      : commitMessage;
     await git.add('.');
     console.log('📝 Staged all changes for commit.');
     await git.commit(fullCommitMessage);
     console.log(`✅ Commit created: "${fullCommitMessage}"`);
     await git.push();
     console.log('🚀 Changes pushed to remote repository.');
-    const versionToTag = versionUpdates.main || Object.values(versionUpdates)[0];
+    const versionToTag = versionUpdates.main || versionUpdates.master || Object.values(versionUpdates)[0];
     if (versionToTag) {
       await createAndPushTag(versionToTag);
     }

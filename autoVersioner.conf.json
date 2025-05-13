@@ -1,4 +1,11 @@
 {
+  "files": [
+    {
+      "path": "package.json",
+      "type": "json",
+      "field": "version"
+    }
+  ],
   "changeEnv": false,
   "skipGitCheck": false
 }
