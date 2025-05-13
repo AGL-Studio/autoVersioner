@@ -19,6 +19,5 @@ export default [
       },
     ],
     plugins: [resolve(), commonjs(), json(), typescript({ tsconfig: './tsconfig.json' })],
-    external: ['inquirer', 'simple-git', 'fs', 'path', 'node:fs/promises', 'node:fs'],
   },
 ];
