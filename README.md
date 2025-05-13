@@ -24,11 +24,22 @@ npm install autoversioner --save-dev
 
 Create a `autoVersioner.conf.json` file in your project root:
 
+### About the `$schema` Field
+
+The `$schema` field at the top of the configuration file is optional but highly recommended. It provides a link to the JSON schema that describes the structure and allowed values for the configuration. When included, many editors (like VS Code) will use this schema to offer features such as:
+
+- **Auto-completion**: Suggests valid fields and values as you type.
+- **Validation**: Warns you about typos or invalid configuration options.
+- **Documentation**: Shows inline descriptions for each field.
+
+This helps prevent configuration errors and makes editing the config file easier and safer.
+
 ### Basic Configuration
 
 ```json
 {
-  "changeEnv": true,
+  "$schema": "https://raw.githubusercontent.com/AGL-Studio/autoVersioner/refs/heads/master/src/utils/config.schema.json",
+  "changeEnv": false,
   "skipGitCheck": false
 }
 ```
@@ -37,6 +48,7 @@ Create a `autoVersioner.conf.json` file in your project root:
 
 ```json
 {
+  "$schema": "https://raw.githubusercontent.com/AGL-Studio/autoVersioner/refs/heads/master/src/utils/config.schema.json",
   "files": [
     {
       "path": "package.json",

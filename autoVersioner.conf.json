@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AGL-Studio/autoVersioner/refs/heads/master/src/utils/config.schema.json",
+  "changeEnv": false,
+  "skipGitCheck": false
+}

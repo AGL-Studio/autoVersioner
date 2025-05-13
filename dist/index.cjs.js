@@ -7154,7 +7154,6 @@ const DEFAULT_CONFIG_PATH = "autoVersioner.conf.json";
 const checkForConf = async (customConfigPath) => {
     const configPath = customConfigPath || DEFAULT_CONFIG_PATH;
     const ajv = new Ajv();
-    // @ts-ignore: Ajv v8+ supports importing JSON
     const validate = ajv.compile(schema);
     try {
         if (!node_fs.existsSync(configPath)) {
@@ -7165,7 +7164,7 @@ const checkForConf = async (customConfigPath) => {
         const conf = JSON.parse(confData);
         if (!validate(conf)) {
             console.error("Config validation error:", validate.errors);
-            return { changeEnv: false };
+            process.exit(2);
         }
         console.log(`Loaded configuration from ${configPath}`);
         return conf;
@@ -7177,7 +7176,7 @@ const checkForConf = async (customConfigPath) => {
         else {
             console.error(`Error reading config file ${configPath}:`, error);
         }
-        return { changeEnv: false };
+        process.exit(2);
     }
 };
 

@@ -15,19 +15,18 @@ export interface ProjectConfig {
 export const checkForConf = async (customConfigPath?: string): Promise<ProjectConfig> => {
   const configPath = customConfigPath || DEFAULT_CONFIG_PATH;
   const ajv = new Ajv();
-  // @ts-ignore: Ajv v8+ supports importing JSON
   const validate = ajv.compile(schema);
   try {
     if (!existsSync(configPath)) {
       console.log(`No config file found at ${configPath}, using defaults`);
       return { changeEnv: false };
     }
-    
+
     const confData = await readFile(configPath, "utf8");
     const conf = JSON.parse(confData);
     if (!validate(conf)) {
       console.error("Config validation error:", validate.errors);
-      return { changeEnv: false };
+      process.exit(2);
     }
     console.log(`Loaded configuration from ${configPath}`);
     return conf as ProjectConfig;
@@ -37,6 +36,6 @@ export const checkForConf = async (customConfigPath?: string): Promise<ProjectCo
     } else {
       console.error(`Error reading config file ${configPath}:`, error);
     }
-    return { changeEnv: false };
+    process.exit(2);
   }
 };
