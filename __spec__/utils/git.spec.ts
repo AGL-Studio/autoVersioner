@@ -7,7 +7,9 @@ const mockGit = {
   status: jest.fn(),
   add: jest.fn(),
   commit: jest.fn(),
-  push: jest.fn()
+  push: jest.fn(),
+  addTag: jest.fn(),
+  pushTags: jest.fn()
 };
 
 (simpleGit as jest.Mock).mockReturnValue(mockGit);
