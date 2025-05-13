@@ -84,11 +84,17 @@ const main = async (): Promise<void> => {
 
 main().catch((error: unknown) => {
   if (error instanceof Error) {
-    console.error("Error in main execution:", error.message);
+    if (error.message.startsWith("Config validation error") || error.message.startsWith("Error reading config file")) {
+      console.error("Configuration error:", error.message);
+      process.exit(2);
+    } else {
+      console.error("Error in main execution:", error.message);
+      process.exit(1);
+    }
   } else {
     console.error("Error in main execution:", error);
+    process.exit(1);
   }
-  process.exit(1);
 });
 
 export { main };

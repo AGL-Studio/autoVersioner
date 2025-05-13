@@ -38,22 +38,20 @@ describe('config utils', () => {
     const conf = await checkForConf('exists.json');
     expect(conf).toEqual(configObj);
   });
-  it('returns default config on parse error', async () => {
+  it('throws on parse error', async () => {
     const fs = require('node:fs');
     const fsp = require('node:fs/promises');
     fs.existsSync.mockReturnValue(true);
     fsp.readFile.mockResolvedValueOnce('not json');
-    const conf = await checkForConf('bad.json');
-    expect(conf).toEqual({ changeEnv: false });
+    await expect(checkForConf('bad.json')).rejects.toThrow('Error reading config file');
   });
-  it('returns default config on schema validation error', async () => {
+  it('throws on schema validation error', async () => {
     const fs = require('node:fs');
     const fsp = require('node:fs/promises');
     fs.existsSync.mockReturnValue(true);
     // missing required "type" in files
     const badConfig = { files: [{ path: 'package.json' }] };
     fsp.readFile.mockResolvedValueOnce(JSON.stringify(badConfig));
-    const conf = await checkForConf('bad-schema.json');
-    expect(conf).toEqual({ changeEnv: false });
+    await expect(checkForConf('bad-schema.json')).rejects.toThrow('Config validation error');
   });
 });

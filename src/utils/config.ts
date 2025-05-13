@@ -26,16 +26,17 @@ export const checkForConf = async (customConfigPath?: string): Promise<ProjectCo
     const conf = JSON.parse(confData);
     if (!validate(conf)) {
       console.error("Config validation error:", validate.errors);
-      process.exit(2);
+      throw new Error("Config validation error");
     }
     console.log(`Loaded configuration from ${configPath}`);
     return conf as ProjectConfig;
   } catch (error) {
     if (error instanceof Error) {
       console.error(`Error reading config file ${configPath}:`, error.message);
+      throw new Error(`Error reading config file ${configPath}: ${error.message}`);
     } else {
       console.error(`Error reading config file ${configPath}:`, error);
+      throw new Error(`Error reading config file ${configPath}: ${error}`);
     }
-    process.exit(2);
   }
 };
