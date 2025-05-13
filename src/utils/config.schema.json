@@ -31,5 +31,5 @@
     "changeEnv": { "type": "boolean" },
     "skipGitCheck": { "type": "boolean" }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }

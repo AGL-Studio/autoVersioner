@@ -7162,7 +7162,7 @@ const checkForConf = async (customConfigPath) => {
         const conf = JSON.parse(confData);
         if (!validate(conf)) {
             console.error("Config validation error:", validate.errors);
-            process.exit(2);
+            throw new Error("Config validation error");
         }
         console.log(`Loaded configuration from ${configPath}`);
         return conf;
@@ -7170,11 +7170,12 @@ const checkForConf = async (customConfigPath) => {
     catch (error) {
         if (error instanceof Error) {
             console.error(`Error reading config file ${configPath}:`, error.message);
+            throw new Error(`Error reading config file ${configPath}: ${error.message}`);
         }
         else {
             console.error(`Error reading config file ${configPath}:`, error);
+            throw new Error(`Error reading config file ${configPath}: ${error}`);
         }
-        process.exit(2);
     }
 };
 
@@ -7419,12 +7420,19 @@ const main = async () => {
 };
 main().catch((error) => {
     if (error instanceof Error) {
-        console.error("Error in main execution:", error.message);
+        if (error.message.startsWith("Config validation error") || error.message.startsWith("Error reading config file")) {
+            console.error("Configuration error:", error.message);
+            process.exit(2);
+        }
+        else {
+            console.error("Error in main execution:", error.message);
+            process.exit(1);
+        }
     }
     else {
         console.error("Error in main execution:", error);
+        process.exit(1);
     }
-    process.exit(1);
 });
 
 export { main };
