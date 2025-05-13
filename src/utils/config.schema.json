@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "type": { "type": "string", "enum": ["json", "env"] },
+          "field": { "type": "string" },
+          "key": { "type": "string" }
+        },
+        "required": ["path", "type"],
+        "additionalProperties": false
+      }
+    },
+    "subprojects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dir": { "type": "string" },
+          "files": { "$ref": "#/properties/files" }
+        },
+        "required": ["dir"],
+        "additionalProperties": false
+      }
+    },
+    "changeEnv": { "type": "boolean" },
+    "skipGitCheck": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

@@ -1,7 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import Ajv from "ajv";
+import schema from "./config.schema.json";
 
-const DEFAULT_CONFIG_PATH = "versionBump.conf.json";
+const DEFAULT_CONFIG_PATH = "autoVersioner.conf.json";
 
 export interface ProjectConfig {
   files?: Array<{ path: string; type: 'json' | 'env'; field?: string; key?: string }>;
@@ -12,7 +14,9 @@ export interface ProjectConfig {
 
 export const checkForConf = async (customConfigPath?: string): Promise<ProjectConfig> => {
   const configPath = customConfigPath || DEFAULT_CONFIG_PATH;
-  
+  const ajv = new Ajv();
+  // @ts-ignore: Ajv v8+ supports importing JSON
+  const validate = ajv.compile(schema);
   try {
     if (!existsSync(configPath)) {
       console.log(`No config file found at ${configPath}, using defaults`);
@@ -21,8 +25,12 @@ export const checkForConf = async (customConfigPath?: string): Promise<ProjectCo
     
     const confData = await readFile(configPath, "utf8");
     const conf = JSON.parse(confData);
+    if (!validate(conf)) {
+      console.error("Config validation error:", validate.errors);
+      return { changeEnv: false };
+    }
     console.log(`Loaded configuration from ${configPath}`);
-    return conf;
+    return conf as ProjectConfig;
   } catch (error) {
     if (error instanceof Error) {
       console.error(`Error reading config file ${configPath}:`, error.message);

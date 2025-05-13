@@ -28,16 +28,16 @@ export type VersionUpdates = Record<string, string>;
 
 const getCurrentVersion = async (filePath: string): Promise<string> => {
   try {
-    console.log(`Reading version from: ${filePath}`);
+    console.log(`📖 Reading version from: ${filePath}`);
     const data = await fs.readFile(filePath, 'utf8');
     const packageJson = JSON.parse(data);
-    console.log(`Current version found: ${packageJson.version}`);
+    console.log(`🔎 Current version found: ${packageJson.version}`);
     return packageJson.version;
   } catch (error) {
     if (error instanceof Error) {
-      console.error(`Failed to read version from ${filePath}:`, error.message);
+      console.error(`❌ Failed to read version from ${filePath}:`, error.message);
     } else {
-      console.error(`Failed to read version from ${filePath}:`, error);
+      console.error(`❌ Failed to read version from ${filePath}:`, error);
     }
     throw error;
   }
@@ -45,7 +45,7 @@ const getCurrentVersion = async (filePath: string): Promise<string> => {
 
 const updateJsonVersion = async (filePath: string, field: string, newVersion: string): Promise<boolean> => {
   try {
-    console.log(`Updating JSON file ${filePath}, field ${field} to ${newVersion}`);
+    console.log(`🛠️  Updating JSON file ${filePath}, field ${field} to ${newVersion}`);
     const data = await fs.readFile(filePath, 'utf8');
     const json = JSON.parse(data);
     json[field] = newVersion;
@@ -53,9 +53,9 @@ const updateJsonVersion = async (filePath: string, field: string, newVersion: st
     return true;
   } catch (error) {
     if (error instanceof Error) {
-      console.error(`Failed to update version in ${filePath}:`, error.message);
+      console.error(`❌ Failed to update version in ${filePath}:`, error.message);
     } else {
-      console.error(`Failed to update version in ${filePath}:`, error);
+      console.error(`❌ Failed to update version in ${filePath}:`, error);
     }
     return false;
   }
@@ -63,11 +63,11 @@ const updateJsonVersion = async (filePath: string, field: string, newVersion: st
 
 const updateEnvVersion = async (filePath: string, key: string, newVersion: string): Promise<boolean> => {
   try {
-    console.log(`Updating ENV file ${filePath}, key ${key} to ${newVersion}`);
+    console.log(`🛠️  Updating ENV file ${filePath}, key ${key} to ${newVersion}`);
     let data = await fs.readFile(filePath, 'utf8');
     
     // Log the current content to debug
-    console.log(`Current ENV content for key ${key}:`, data.match(new RegExp(`^${key}=(.*)$`, 'm')));
+    console.log(`🔎 Current ENV content for key ${key}:`, data.match(new RegExp(`^${key}=(.*)$`, 'm')));
     
     const regex = new RegExp(`^${key}=.*$`, 'm');
     data = data.replace(regex, `${key}=${newVersion}`);
@@ -75,9 +75,9 @@ const updateEnvVersion = async (filePath: string, key: string, newVersion: strin
     return true;
   } catch (error) {
     if (error instanceof Error) {
-      console.error(`Failed to update version in ${filePath}:`, error.message);
+      console.error(`❌ Failed to update version in ${filePath}:`, error.message);
     } else {
-      console.error(`Failed to update version in ${filePath}:`, error);
+      console.error(`❌ Failed to update version in ${filePath}:`, error);
     }
     return false;
   }
@@ -108,7 +108,7 @@ export const updateAllVersions = async (
   config: ProjectConfig,
   projectsToUpdate: string[] = ['main', ...(config.subprojects?.map(p => p.dir) || [])]
 ): Promise<VersionUpdates> => {
-  console.log(`Updating versions for projects: ${projectsToUpdate.join(', ')}`);
+  console.log(`🔄 Updating versions for projects: ${projectsToUpdate.join(', ')}`);
   
   const versionUpdates: VersionUpdates = {};
   
@@ -118,7 +118,7 @@ export const updateAllVersions = async (
     if (mainPackageFile) {
       const mainVersion = await getCurrentVersion(mainPackageFile.path);
       const newVersion = calculateNewVersion(mainVersion, versionType);
-      console.log(`Main project: ${mainVersion} -> ${newVersion}`);
+      console.log(`📦 Main project: ${mainVersion} -> ${newVersion}`);
       
       for (const file of config.files || []) {
         if (file.type === 'json') {
@@ -129,7 +129,7 @@ export const updateAllVersions = async (
       }
       
       versionUpdates.main = newVersion;
-      console.log(`Updated main project version to ${newVersion}`);
+      console.log(`✅ Updated main project version to ${newVersion}`);
     }
   }
   
@@ -142,22 +142,22 @@ export const updateAllVersions = async (
           const fullPath = path.join(subproject.dir, subPackageFile.path);
           const currentVersion = await getCurrentVersion(fullPath);
           const newVersion = calculateNewVersion(currentVersion, versionType);
-          console.log(`${subproject.dir} project: ${currentVersion} -> ${newVersion}`);
+          console.log(`📁 ${subproject.dir} project: ${currentVersion} -> ${newVersion}`);
           
           for (const file of subproject.files || []) {
             const filePath = path.join(subproject.dir, file.path);
             if (file.type === 'json') {
               await updateJsonVersion(filePath, file.field || 'version', newVersion);
             } else if (file.type === 'env' && file.key) {
-              console.log(`Attempting to update ENV file: ${filePath} with key: ${file.key}`);
+              console.log(`🛠️  Attempting to update ENV file: ${filePath} with key: ${file.key}`);
               await updateEnvVersion(filePath, file.key, newVersion);
             }
           }
           
           versionUpdates[subproject.dir] = newVersion;
-          console.log(`Updated ${subproject.dir} project version to ${newVersion}`);
+          console.log(`✅ Updated ${subproject.dir} project version to ${newVersion}`);
         } else {
-          console.warn(`No package.json found for subproject: ${subproject.dir}`);
+          console.warn(`⚠️  No package.json found for subproject: ${subproject.dir}`);
         }
       }
     }
@@ -173,7 +173,7 @@ export const updatePackageVersion = async (
 ): Promise<string> => {
   if (customVersion) {
     const packageJson = await readJsonFile(packagePath);
-    console.log(`Updating version ${packageJson.version} -> ${customVersion} in ${packagePath}`);
+    console.log(`🛠️  Updating version ${packageJson.version} -> ${customVersion} in ${packagePath}`);
     packageJson.version = customVersion;
     await writeJsonFile(packagePath, packageJson);
     return customVersion;
@@ -181,7 +181,7 @@ export const updatePackageVersion = async (
     const packageJson = await readJsonFile(packagePath);
     const currentVersion = packageJson.version;
     const newVersion = calculateNewVersion(currentVersion, versionType);
-    console.log(`Updating version ${currentVersion} -> ${newVersion} in ${packagePath}`);
+    console.log(`🛠️  Updating version ${currentVersion} -> ${newVersion} in ${packagePath}`);
     packageJson.version = newVersion;
     await writeJsonFile(packagePath, packageJson);
     return newVersion;

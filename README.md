@@ -22,7 +22,7 @@ npm install autoversioner --save-dev
 
 ## Configuration
 
-Create a `versionBump.conf.json` file in your project root:
+Create a `autoVersioner.conf.json` file in your project root:
 
 ### Basic Configuration
 

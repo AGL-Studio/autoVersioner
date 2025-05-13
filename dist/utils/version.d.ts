@@ -16,6 +16,7 @@ export interface ProjectConfig {
 }
 export type VersionType = 'major' | 'minor' | 'patch';
 export type VersionUpdates = Record<string, string>;
+export declare const calculateNewVersion: (currentVersion: string, versionType: VersionType) => string;
 export declare const updateAllVersions: (versionType: VersionType, config: ProjectConfig, projectsToUpdate?: string[]) => Promise<VersionUpdates>;
 export declare const updatePackageVersion: (versionType: VersionType, packagePath?: string, customVersion?: string | null) => Promise<string>;
 export declare const updateEnv: (newVersion: string, envPath: string, envVersionValue: string) => Promise<boolean>;

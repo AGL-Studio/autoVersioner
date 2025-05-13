@@ -1,5 +1,22 @@
 import simpleGit from 'simple-git';
 
+export const createAndPushTag = async (version: string): Promise<void> => {
+  try {
+    const git = simpleGit();
+    const tagName = `ver-${version}`;
+    await git.addTag(tagName);
+    await git.pushTags();
+    console.log(`🏷️  Tag created and pushed: ${tagName}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('❌ Failed to create and push tag:', error.message);
+    } else {
+      console.error('❌ Failed to create and push tag:', error);
+    }
+    throw error;
+  }
+};
+
 export const pushToGit = async (
   versionUpdates: Record<string, string>,
   commitMessage: string
@@ -8,7 +25,7 @@ export const pushToGit = async (
     const git = simpleGit();
     const status = await git.status();
     if (status.files.length === 0) {
-      console.log('No changes to commit.');
+      console.log('ℹ️  No changes to commit. Working tree clean.');
       return;
     }
     const versionInfo = Object.entries(versionUpdates)
@@ -16,14 +33,20 @@ export const pushToGit = async (
       .join(', ');
     const fullCommitMessage = `${commitMessage} [${versionInfo}]`;
     await git.add('.');
+    console.log('📝 Staged all changes for commit.');
     await git.commit(fullCommitMessage);
+    console.log(`✅ Commit created: "${fullCommitMessage}"`);
     await git.push();
-    console.log(`Changes committed and pushed to Git: ${fullCommitMessage}`);
+    console.log('🚀 Changes pushed to remote repository.');
+    const versionToTag = versionUpdates.main || Object.values(versionUpdates)[0];
+    if (versionToTag) {
+      await createAndPushTag(versionToTag);
+    }
   } catch (error) {
     if (error instanceof Error) {
-      console.error('Error pushing to Git:', error.message);
+      console.error('❌ Error pushing to Git:', error.message);
     } else {
-      console.error('Error pushing to Git:', error);
+      console.error('❌ Error pushing to Git:', error);
     }
     throw error;
   }

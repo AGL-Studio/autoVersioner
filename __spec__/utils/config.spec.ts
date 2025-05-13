@@ -14,13 +14,29 @@ describe('config utils', () => {
     const conf = await checkForConf('missing.json');
     expect(conf).toEqual({ changeEnv: false });
   });
-  it('parses config file if exists', async () => {
+  it('parses config file with all properties', async () => {
     const fs = require('node:fs');
     const fsp = require('node:fs/promises');
     fs.existsSync.mockReturnValue(true);
-    fsp.readFile.mockResolvedValueOnce('{"changeEnv":true}');
+    const configObj = {
+      changeEnv: true,
+      skipGitCheck: true,
+      files: [
+        { path: 'package.json', type: 'json', field: 'version' },
+        { path: '.env', type: 'env', key: 'APP_VERSION' }
+      ],
+      subprojects: [
+        {
+          dir: 'packages/foo',
+          files: [
+            { path: 'foo.json', type: 'json', field: 'version' }
+          ]
+        }
+      ]
+    };
+    fsp.readFile.mockResolvedValueOnce(JSON.stringify(configObj));
     const conf = await checkForConf('exists.json');
-    expect(conf).toEqual({ changeEnv: true });
+    expect(conf).toEqual(configObj);
   });
   it('returns default config on parse error', async () => {
     const fs = require('node:fs');
@@ -28,6 +44,16 @@ describe('config utils', () => {
     fs.existsSync.mockReturnValue(true);
     fsp.readFile.mockResolvedValueOnce('not json');
     const conf = await checkForConf('bad.json');
+    expect(conf).toEqual({ changeEnv: false });
+  });
+  it('returns default config on schema validation error', async () => {
+    const fs = require('node:fs');
+    const fsp = require('node:fs/promises');
+    fs.existsSync.mockReturnValue(true);
+    // missing required "type" in files
+    const badConfig = { files: [{ path: 'package.json' }] };
+    fsp.readFile.mockResolvedValueOnce(JSON.stringify(badConfig));
+    const conf = await checkForConf('bad-schema.json');
     expect(conf).toEqual({ changeEnv: false });
   });
 });
