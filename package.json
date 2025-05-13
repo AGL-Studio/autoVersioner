@@ -1,6 +1,6 @@
 {
   "name": "autoversioner",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A simple cli tool to help you better track versions in your project",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
