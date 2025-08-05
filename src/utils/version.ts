@@ -8,7 +8,6 @@ export interface FileConfig {
   path: string;
   type: 'json' | 'env';
   field?: string;
-  key?: string;
 }
 
 export interface SubprojectConfig {
@@ -61,16 +60,21 @@ const updateJsonVersion = async (filePath: string, field: string, newVersion: st
   }
 };
 
-const updateEnvVersion = async (filePath: string, key: string, newVersion: string): Promise<boolean> => {
+const updateEnvVersion = async (filePath: string, field: string, newVersion: string): Promise<boolean> => {
   try {
-    console.log(`🛠️  Updating ENV file ${filePath}, key ${key} to ${newVersion}`);
+    console.log(`🛠️  Updating ENV file ${filePath}, field ${field} to ${newVersion}`);
     let data = await fs.readFile(filePath, 'utf8');
     
-    // Log the current content to debug
-    console.log(`🔎 Current ENV content for key ${key}:`, data.match(new RegExp(`^${key}=(.*)$`, 'm')));
+    // Check if the field exists and log only the field name, not the value
+    const fieldExists = data.match(new RegExp(`^${field}=.*$`, 'm'));
+    if (fieldExists) {
+      console.log(`🔎 Found field ${field} in ENV file`);
+    } else {
+      console.log(`⚠️  Field ${field} not found in ENV file`);
+    }
     
-    const regex = new RegExp(`^${key}=.*$`, 'm');
-    data = data.replace(regex, `${key}=${newVersion}`);
+    const regex = new RegExp(`^${field}=.*$`, 'm');
+    data = data.replace(regex, `${field}=${newVersion}`);
     await fs.writeFile(filePath, data, 'utf8');
     return true;
   } catch (error) {
@@ -123,8 +127,8 @@ export const updateAllVersions = async (
       for (const file of config.files || []) {
         if (file.type === 'json') {
           await updateJsonVersion(file.path, file.field || 'version', newVersion);
-        } else if (file.type === 'env' && file.key) {
-          await updateEnvVersion(file.path, file.key, newVersion);
+        } else if (file.type === 'env' && file.field) {
+          await updateEnvVersion(file.path, file.field, newVersion);
         }
       }
       
@@ -148,9 +152,9 @@ export const updateAllVersions = async (
             const filePath = path.join(subproject.dir, file.path);
             if (file.type === 'json') {
               await updateJsonVersion(filePath, file.field || 'version', newVersion);
-            } else if (file.type === 'env' && file.key) {
-              console.log(`🛠️  Attempting to update ENV file: ${filePath} with key: ${file.key}`);
-              await updateEnvVersion(filePath, file.key, newVersion);
+            } else if (file.type === 'env' && file.field) {
+              console.log(`🛠️  Attempting to update ENV file: ${filePath} with field: ${file.field}`);
+              await updateEnvVersion(filePath, file.field, newVersion);
             }
           }
           

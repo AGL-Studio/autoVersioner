@@ -58,7 +58,7 @@ This helps prevent configuration errors and makes editing the config file easier
     {
       "path": ".env",
       "type": "env",
-      "key": "VERSION"
+      "field": "VERSION"
     }
   ],
   "subprojects": [
@@ -73,7 +73,7 @@ This helps prevent configuration errors and makes editing the config file easier
         {
           "path": ".env",
           "type": "env",
-          "key": "NEXT_PUBLIC_VERSION"
+          "field": "NEXT_PUBLIC_VERSION"
         }
       ]
     },
@@ -88,7 +88,7 @@ This helps prevent configuration errors and makes editing the config file easier
         {
           "path": ".env",
           "type": "env",
-          "key": "API_VERSION"
+          "field": "API_VERSION"
         }
       ]
     }
