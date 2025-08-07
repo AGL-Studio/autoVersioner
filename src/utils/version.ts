@@ -65,15 +65,23 @@ const updateEnvVersion = async (filePath: string, field: string, newVersion: str
     console.log(`🛠️  Updating ENV file ${filePath}, field ${field} to ${newVersion}`);
     let data = await fs.readFile(filePath, 'utf8');
     
+    // Escape special regex characters in the field name
+    const escapedField = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    
     // Check if the field exists and log only the field name, not the value
-    const fieldExists = data.match(new RegExp(`^${field}=.*$`, 'm'));
+    const fieldExists = data.match(new RegExp(`^${escapedField}=.*$`, 'm'));
     if (fieldExists) {
       console.log(`🔎 Found field ${field} in ENV file`);
     } else {
       console.log(`⚠️  Field ${field} not found in ENV file`);
+      // If field doesn't exist, add it at the end of the file
+      data = data.trim() + '\n' + `${field}=${newVersion}\n`;
+      await fs.writeFile(filePath, data, 'utf8');
+      console.log(`➕ Added field ${field} to ENV file`);
+      return true;
     }
     
-    const regex = new RegExp(`^${field}=.*$`, 'm');
+    const regex = new RegExp(`^${escapedField}=.*$`, 'm');
     data = data.replace(regex, `${field}=${newVersion}`);
     await fs.writeFile(filePath, data, 'utf8');
     return true;
