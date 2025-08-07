@@ -1,0 +1,42 @@
+{
+  "files": [
+    {
+      "path": "package.json",
+      "type": "json",
+      "field": "version"
+    }
+  ],
+  "subprojects": [
+    {
+      "dir": "server",
+      "files": [
+        {
+          "path": "package.json",
+          "type": "json",
+          "field": "version"
+        },
+        {
+          "path": ".env",
+          "type": "env",
+          "field": "VERSION"
+        }
+      ]
+    },
+    {
+      "dir": "client",
+      "files": [
+        {
+          "path": "package.json",
+          "type": "json",
+          "field": "version"
+        },
+        {
+          "path": ".env",
+          "type": "env",
+          "field": "VITE_VERSION"
+        }
+      ]
+    }
+  ],
+  "skipGitCheck": false
+}
