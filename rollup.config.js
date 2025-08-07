@@ -8,18 +8,29 @@ export default [
     input: 'src/index.ts',
     output: [
       {
-        dir: 'dist/cjs',
+        file: 'dist/index.cjs',
         format: 'cjs',
         sourcemap: true,
-        entryFileNames: 'index.cjs',
       },
       {
-        dir: 'dist/esm',
+        file: 'dist/index.esm.js',
         format: 'esm',
         sourcemap: true,
-        entryFileNames: 'index.esm.js',
       },
     ],
-    plugins: [resolve(), commonjs(), json(), typescript({ tsconfig: './tsconfig.json' })],
+    plugins: [
+      resolve({
+        preferBuiltins: true,
+      }),
+      commonjs(),
+      json(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        sourceMap: true,
+        declaration: true,
+        declarationDir: './dist',
+      }),
+    ],
+    external: ['node:fs/promises', 'node:fs', 'node:path'],
   },
 ];

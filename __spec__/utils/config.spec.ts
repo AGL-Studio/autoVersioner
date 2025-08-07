@@ -23,7 +23,7 @@ describe('config utils', () => {
       skipGitCheck: true,
       files: [
         { path: 'package.json', type: 'json', field: 'version' },
-        { path: '.env', type: 'env', key: 'APP_VERSION' }
+        { path: '.env', type: 'env', field: 'APP_VERSION' }
       ],
       subprojects: [
         {

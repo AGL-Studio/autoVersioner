@@ -1,32 +1,29 @@
 import { readFile, writeFile } from "node:fs/promises";
 
+// Custom error class for file operations
+class FileError extends Error {
+  constructor(message: string, public readonly filePath?: string) {
+    super(message);
+    this.name = 'FileError';
+  }
+}
+
 export const readJsonFile = async (path: string): Promise<any> => {
-  console.log(`Reading JSON file at ${path}`);
   try {
     const data = await readFile(path, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(`Error reading JSON file at ${path}:`, error.message);
-    } else {
-      console.error(`Error reading JSON file at ${path}:`, error);
-    }
-    throw error;
+    const message = error instanceof Error ? error.message : String(error);
+    throw new FileError(`Error reading JSON file at ${path}: ${message}`, path);
   }
 };
 
 export const writeJsonFile = async (path: string, data: object): Promise<void> => {
-  console.log(`Writing JSON file at ${path}`);
   try {
     const jsonString = JSON.stringify(data, null, 2);
-    await writeFile(path, jsonString);
-    console.log(`✓ Successfully wrote to ${path}`);
+    await writeFile(path, jsonString, "utf8");
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(`Error writing JSON file at ${path}:`, error.message);
-    } else {
-      console.error(`Error writing JSON file at ${path}:`, error);
-    }
-    throw error;
+    const message = error instanceof Error ? error.message : String(error);
+    throw new FileError(`Error writing JSON file at ${path}: ${message}`, path);
   }
 };

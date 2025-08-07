@@ -2,6 +2,17 @@
 
 `autoVersioner` is a streamlined command-line tool for managing version numbers across projects and subprojects. It simplifies incrementing version numbers in `package.json` files and environment files, with automatic Git integration for version tracking.
 
+## 🚀 Recent Optimizations
+
+This package has been optimized for better performance, security, and maintainability:
+
+- **🔒 Security Fixes**: Removed sensitive data logging from environment files
+- **⚡ Performance Improvements**: Optimized error handling and reduced bundle size
+- **🧹 Code Cleanup**: Removed unnecessary files and improved code structure
+- **📦 Package Optimization**: Excluded unnecessary files from npm package
+- **🛡️ Better Error Handling**: Custom error classes for improved debugging
+- **🎯 TypeScript Improvements**: Stricter type checking and better configurations
+
 ## Features
 
 - **Version Control**: Easily increment version numbers (major, minor, patch) across your project

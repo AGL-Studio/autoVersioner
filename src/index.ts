@@ -19,10 +19,11 @@ const parseArgs = (): ParsedArgs => {
   };
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--config" || args[i] === "-c") {
+    const arg = args[i];
+    if (arg === "--config" || arg === "-c") {
       config.configPath = args[i + 1];
       i++;
-    } else if (args[i] === "--project" || args[i] === "-p") {
+    } else if (arg === "--project" || arg === "-p") {
       config.projects.push(args[i + 1]);
       i++;
     }
@@ -36,12 +37,8 @@ const main = async (): Promise<void> => {
   const conf = await checkForConf(configPath ?? undefined);
 
   const availableProjects = ["main", ...(conf.subprojects || []).map(p => p.dir)];
-  // Dynamically import inquirer for ESM/CJS compatibility
-  const inquirerModule = await import("inquirer");
-  // Always use .default, as inquirer v12+ is ESM-only and exports prompt on default
-  const inquirerPrompt = inquirerModule.default.prompt;
 
-  const answers = await inquirerPrompt([
+  const answers = await inquirer.prompt([
     {
       type: "list",
       name: "versionType",

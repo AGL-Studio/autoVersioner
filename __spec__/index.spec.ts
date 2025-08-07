@@ -1,5 +1,5 @@
 import { checkForConf } from '../src/utils/config.js';
-import { updateAllVersions, VersionType } from '../src/utils/version.js';
+import { updateAllVersions } from '../src/utils/version.js';
 import { pushToGit } from '../src/utils/git.js';
 
 jest.mock('../src/utils/config.js', () => ({

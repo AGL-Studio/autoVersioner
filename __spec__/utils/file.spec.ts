@@ -24,7 +24,7 @@ describe('file utils', () => {
     it('should write JSON string', async () => {
       const fs = require('node:fs/promises');
       await writeJsonFile('test.json', { foo: 'bar' });
-      expect(fs.writeFile).toHaveBeenCalledWith('test.json', JSON.stringify({ foo: 'bar' }, null, 2));
+      expect(fs.writeFile).toHaveBeenCalledWith('test.json', JSON.stringify({ foo: 'bar' }, null, 2), 'utf8');
     });
   });
 });
