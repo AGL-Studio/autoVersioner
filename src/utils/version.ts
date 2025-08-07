@@ -133,10 +133,14 @@ export const updateAllVersions = async (
       console.log(`📦 Main project: ${mainVersion} -> ${newVersion}`);
       
       for (const file of config.files || []) {
+        console.log(`🔍 Processing main file: ${file.path} (type: ${file.type}, field: ${file.field})`);
         if (file.type === 'json') {
           await updateJsonVersion(file.path, file.field || 'version', newVersion);
         } else if (file.type === 'env' && file.field) {
+          console.log(`🛠️  Attempting to update ENV file: ${file.path} with field: ${file.field}`);
           await updateEnvVersion(file.path, file.field, newVersion);
+        } else {
+          console.log(`⚠️  Skipping main file ${file.path} - type: ${file.type}, field: ${file.field}`);
         }
       }
       
@@ -158,11 +162,14 @@ export const updateAllVersions = async (
           
           for (const file of subproject.files || []) {
             const filePath = path.join(subproject.dir, file.path);
+            console.log(`🔍 Processing file: ${filePath} (type: ${file.type}, field: ${file.field})`);
             if (file.type === 'json') {
               await updateJsonVersion(filePath, file.field || 'version', newVersion);
             } else if (file.type === 'env' && file.field) {
               console.log(`🛠️  Attempting to update ENV file: ${filePath} with field: ${file.field}`);
               await updateEnvVersion(filePath, file.field, newVersion);
+            } else {
+              console.log(`⚠️  Skipping file ${filePath} - type: ${file.type}, field: ${file.field}`);
             }
           }
           
